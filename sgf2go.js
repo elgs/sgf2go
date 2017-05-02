@@ -166,6 +166,32 @@ Result: Black wins by resignation])
 ))
 `;
 
+const fillArray = (arr, id, hash) => {
+    hash[id].children.map(item => {
+        if (typeof item === "string") {
+            arr.push(item);
+        } else if (typeof item === "number") {
+            let newArr = [];
+            arr.push(newArr);
+            fillArray(newArr, item, hash);
+        }
+    });
+};
+
+const fillMainStream = (arr, data) => {
+    let index = 0;
+    data.map(item => {
+        if (typeof item === "string") {
+            arr.push(item);
+        } else if (Array.isArray(item)) {
+            if (index === 0) {
+                fillMainStream(arr, item);
+            }
+            ++index;
+        }
+    });
+};
+
 class Node {
     constructor(parent) {
         this.parent = parent;
@@ -173,7 +199,7 @@ class Node {
     }
 }
 
-const spf2json = (sgf) => {
+const sgf2json = (sgf) => {
     let counter = 0;
     let hash = {};
     let current = 0;
@@ -225,21 +251,38 @@ const spf2json = (sgf) => {
     return root;
 };
 
-const fillArray = (arr, id, hash) => {
-    hash[id].children.map(item => {
-        if (typeof item === "string") {
-            arr.push(item);
-        } else if (typeof item === "number") {
-            let newArr = [];
-            arr.push(newArr);
-            fillArray(newArr, item, hash);
-        }
-    });
+const sgfMainStream = (sgf) => {
+    const parsed = sgf2json(sgf);
+    let ret = [];
+    fillMainStream(ret, parsed);
+    return ret;
 };
 
-const testData = `(;B[aa];W[bb](;AD[ee]AW[ff])(;AE[gg])(;B[ss]))`;
+
+const writeSgfTree = (ret, json) => {
+    json.map(item => {
+        if (typeof item === "string") {
+            ret.a += ';' + item;
+        } else if (Array.isArray(item)) {
+            ret.a += '(';
+            writeSgfTree(ret, item);
+            ret.a += ')';
+        }
+    });
+
+};
+
+const json2sgf = (json) => {
+    let ret = {a: ''};
+    writeSgfTree(ret, json);
+    return ret.a;
+};
+
+const testData = `(;B[aa];W[bb]C[wooF[3\\]h;oo](;AD[ee]AW[ff])(;AE[gg])(;B[ss]))`;
 const testEmpty = `()`;
 
-let parsed = spf2json(testData);
 
-console.log(JSON.stringify(parsed, null, 2));
+const parsed = sgf2json(testData);
+console.log(JSON.stringify(sgf2json(testData), null, 2));
+console.log(JSON.stringify(sgfMainStream(testData), null, 2));
+console.log(json2sgf(parsed));
