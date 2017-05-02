@@ -166,28 +166,80 @@ Result: Black wins by resignation])
 ))
 `;
 
-const parseSgf = (sgf) => {
-    let workingArray = null;
-    let stack = [];
+class Node {
+    constructor(parent) {
+        this.parent = parent;
+        this.children = [];
+    }
+}
+
+const spf2json = (sgf) => {
+    let counter = 0;
+    let hash = {};
+    let current = 0;
+    let buf = '';
     let inSqBracket = false;
+    hash['0'] = new Node();
+
     for (let i in sgf) {
         const a = sgf[i];
         if (inSqBracket) {
+            if (a === ']' && sgf[i - 1] !== '\\') {
+                inSqBracket = false;
+            }
+            buf += a;
         } else {
             if (a === '(') {
-                workingArray = [];
+                if (buf.trim().length > 0) {
+                    hash[current].children.push(buf.trim());
+                    buf = '';
+                }
+                hash[++counter] = new Node(current);
+                hash[current].children.push(counter);
+                current = counter;
             } else if (a === ';') {
-
+                if (buf.trim().length > 0) {
+                    hash[current].children.push(buf.trim());
+                    buf = '';
+                }
             } else if (a === ')') {
-
+                if (buf.trim().length > 0) {
+                    hash[current].children.push(buf.trim());
+                    buf = '';
+                }
+                current = hash[current].parent;
             } else if (a === '[') {
                 inSqBracket = true;
-            } else if (a === ']' && sgf[i - 1] !== '\\') {
-                inSqBracket = false;
+                buf += a;
+            } else {
+                buf += a;
             }
         }
     }
+
+    // console.log(JSON.stringify(hash, null, 2));
+
+    let root = [];
+    fillArray(root, 0, hash);
+
+    return root;
 };
 
+const fillArray = (arr, id, hash) => {
+    hash[id].children.map(item => {
+        if (typeof item === "string") {
+            arr.push(item);
+        } else if (typeof item === "number") {
+            let newArr = [];
+            arr.push(newArr);
+            fillArray(newArr, item, hash);
+        }
+    });
+};
 
-parseSgf(sgfData);
+const testData = `(;B[aa];W[bb](;AD[ee]AW[ff])(;AE[gg])(;B[ss]))`;
+const testEmpty = `()`;
+
+let parsed = spf2json(testData);
+
+console.log(JSON.stringify(parsed, null, 2));
