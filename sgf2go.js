@@ -283,6 +283,12 @@ const testEmpty = `()`;
 
 
 const parsed = sgf2json(testData);
-console.log(JSON.stringify(sgf2json(testData), null, 2));
+
+console.log(JSON.stringify(parsed, null, 2));
 console.log(JSON.stringify(sgfMainStream(testData), null, 2));
-console.log(json2sgf(parsed));
+
+const generated = json2sgf(parsed);
+console.log(generated);
+
+const parsed1 = sgf2json(generated);
+console.log(JSON.stringify(parsed1, null, 2));
