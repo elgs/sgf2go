@@ -1,6 +1,6 @@
 {
   "name": "sgf2go",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "SGF Go game parser and generator.",
   "main": "sgf2go.js",
   "scripts": {

@@ -1,6 +1,6 @@
 sgf2go
 ============
-An [SGF File Format FF[4] compliant](http://www.red-bean.com/sgf/) SGF file parser and generator.
+An [SGF File Format FF[4]](http://www.red-bean.com/sgf/) compliant SGF file parser and generator.
 
 ## Installation
 
@@ -9,7 +9,10 @@ An [SGF File Format FF[4] compliant](http://www.red-bean.com/sgf/) SGF file pars
 ## Introduction
 
 I used to use a regular expression to extract what I needed from an `sgf` file, specifically this one: 
-`/;[BW]\[\w{2}]|A[BWE](\[(\w|:)+]|\s)+|PL\[[BW]]/gi`, until I found myself naïve when dealing with an `sgf` file with 
+```regexp
+/;[BW]\[\w{2}]|A[BWE](\[(\w|:)+]|\s)+|PL\[[BW]]/gi
+``` 
+until I found myself naïve when dealing with an `sgf` file with 
 variations. most of, if not all, the time, I don't care about the variations. However, my regular expression could not
 differentiate which node belongs to the main stream, and which belongs to a variation. This library serves the purpose
 of solving this problem..
