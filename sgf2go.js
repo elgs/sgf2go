@@ -102,12 +102,23 @@ const sgf2jsonMain = (sgf) => {
     return ret;
 };
 
-
 const json2sgf = (json) => {
     let ret = {a: ''};
     writeSgfTree(ret, json);
     return ret.a;
 };
+
+const json = [
+    [
+        'FF[4]GM[1]SZ[19]',
+        'B[aa]',
+        'W[bb]',
+        ['B[cc]', 'W[dd]', 'B[ad]', 'W[bd]'],
+        ['B[hh]', 'W[hg]']
+    ]
+];
+const generated = json2sgf(json);
+console.log(generated);
 
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     exports.sgf2json = sgf2json;
