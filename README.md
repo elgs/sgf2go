@@ -15,7 +15,7 @@ I used to use a regular expression to extract what I needed from an `sgf` file, 
 until I found myself naïve when dealing with an `sgf` file with 
 variations. most of, if not all, the time, I don't care about the variations. However, my regular expression could not
 differentiate the nodes belong to the main stream from the nodes belong to a variation. This library serves the purpose
-of solving this problem..
+of solving this problem.
 
 Essentially, an `sgf` file contains lists of lists of nodes. A list is enclosed in a pair of curly brackets, while a
 node starts with a semi-colon `;`.
@@ -68,9 +68,6 @@ One with variation will yield the following result:
   ]
 ]
 ```
-
- 
-`sgf2go` makes the `sgf` files easier to work with by transforming a `sgf` format file into `json`.
 
 ## Usage
 
