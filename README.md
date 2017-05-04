@@ -30,15 +30,32 @@ With `sgf2go`, an `sgf` file with no variations: will be converted to the follow
 ```json
 [
   [
-    "FF[4]GM[1]SZ[19]",
-    "B[aa]",
-    "W[bb]",
-    "B[cc]",
-    "W[dd]",
-    "B[ad]",
-    "W[bd]"
+    [
+      {"key": "FF", "value": ["4"]},
+      {"key": "GM", "value": ["1"]},
+      {"key": "SZ", "value": ["19"]}
+    ],
+    [
+      {"key": "B", "value": ["aa"]}
+    ],
+    [
+      {"key": "W", "value": ["bb"]}
+    ],
+    [
+      {"key": "B", "value": ["cc"]}
+    ],
+    [
+      {"key": "W", "value": ["dd"]}
+    ],
+    [
+      {"key": "B", "value": ["ad"]}
+    ],
+    [
+      {"key": "W", "value": ["bd"]}
+    ]
   ]
 ]
+
 ```
 
 One with variation will yield the following result:
@@ -52,21 +69,42 @@ One with variation will yield the following result:
 ```json
 [
   [
-    "FF[4]GM[1]SZ[19]",
-    "B[aa]",
-    "W[bb]",
     [
-      "B[cc]",
-      "W[dd]",
-      "B[ad]",
-      "W[bd]"
+      {"key":"FF","value":["4"]},
+      {"key":"GM","value":["1"]},
+      {"key":"SZ","value":["19"]}
     ],
     [
-      "B[hh]",
-      "W[hg]"
+      {"key":"B","value":["aa"]}
+    ],
+    [
+      {"key":"W","value":["bb"]}
+    ],
+    [
+      [
+        {"key":"B","value":["cc"]}
+      ],
+      [
+        {"key":"W","value":["dd"]}
+      ],
+      [
+        {"key":"B","value":["ad"]}
+      ],
+      [
+        {"key":"W","value":["bd"]}
+      ]
+    ],
+    [
+      [
+        {"key":"B","value":["hh"]}
+      ],
+      [
+        {"key":"W","value":["hg"]}
+      ]
     ]
   ]
 ]
+
 ```
 
 ## Usage
@@ -90,15 +128,43 @@ console.log(parsed);
 ```
 
 The output will be:
-```javascript
-[ 
-  [ 
-    'FF[4]GM[1]SZ[19]',
-    'B[aa]',
-    'W[bb]',
-    ['B[cc]', 'W[dd]', 'B[ad]', 'W[bd]'],
-    ['B[hh]', 'W[hg]'] 
-  ] 
+```json
+[
+  [
+    [
+      {"key":"FF","value":["4"]},
+      {"key":"GM","value":["1"]},
+      {"key":"SZ","value":["19"]}
+    ],
+    [
+      {"key":"B","value":["aa"]}
+    ],
+    [
+      {"key":"W","value":["bb"]}
+    ],
+    [
+      [
+        {"key":"B","value":["cc"]}
+      ],
+      [
+        {"key":"W","value":["dd"]}
+      ],
+      [
+        {"key":"B","value":["ad"]}
+      ],
+      [
+        {"key":"W","value":["bd"]}
+      ]
+    ],
+    [
+      [
+        {"key":"B","value":["hh"]}
+      ],
+      [
+        {"key":"W","value":["hg"]}
+      ]
+    ]
+  ]
 ]
 ```
 
@@ -111,36 +177,84 @@ console.log(parsed);
 ```
 
 The output will be:
-```javascript
-[ 
-  'FF[4]GM[1]SZ[19]',
-  'B[aa]',
-  'W[bb]',
-  'B[cc]',
-  'W[dd]',
-  'B[ad]',
-  'W[bd]' 
+```json
+[
+  [
+    {"key":"FF","value":["4"]},
+    {"key":"GM","value":["1"]},
+    {"key":"SZ","value":["19"]}
+  ],
+  [
+    {"key":"B","value":["aa"]}
+  ],
+  [
+    {"key":"W","value":["bb"]}
+  ],
+  [
+    {"key":"B","value":["cc"]}
+  ],
+  [
+    {"key":"W","value":["dd"]}
+  ],
+  [
+    {"key":"B","value":["ad"]}
+  ],
+  [
+    {"key":"W","value":["bd"]}
+  ]
 ]
+
 ```
 
 ## Generate `sgf` from `json`:
 ```javascript
-const json = [
+const json =[
+  [
     [
-        'FF[4]GM[1]SZ[19]',
-        'B[aa]',
-        'W[bb]',
-        ['B[cc]', 'W[dd]', 'B[ad]', 'W[bd]'],
-        ['B[hh]', 'W[hg]']
+      {"key":"FF","value":["4"]},
+      {"key":"GM","value":["1"]},
+      {"key":"SZ","value":["19"]}
+    ],
+    [
+      {"key":"B","value":["aa"]}
+    ],
+    [
+      {"key":"W","value":["bb"]}
+    ],
+    [
+      [
+        {"key":"B","value":["cc"]}
+      ],
+      [
+        {"key":"W","value":["dd"]}
+      ],
+      [
+        {"key":"B","value":["ad"]}
+      ],
+      [
+        {"key":"W","value":["bd"]}
+      ]
+    ],
+    [
+      [
+        {"key":"B","value":["hh"]}
+      ],
+      [
+        {"key":"W","value":["hg"]}
+      ]
     ]
+  ]
 ];
-const generated = json2sgf(json);
+
+const generated = sgf2go.json2sgf(json);
+// in browser, const generated = json2sgf(json);
 console.log(generated);
 ```
 
 The output will be:
 ```sgf
 (;FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc];W[dd];B[ad];W[bd])(;B[hh];W[hg]))
+
 ```
 
 Hope it helps.

@@ -1,104 +1,125 @@
-const fillArray = (arr, id, hash) => {
-    hash[id].children.map(item => {
-        if (typeof item === "string") {
-            arr.push(item);
-        } else if (typeof item === "number") {
-            let newArr = [];
-            arr.push(newArr);
-            fillArray(newArr, item, hash);
-        }
-    });
-};
-
-const fillMainStream = (arr, data) => {
-    let index = 0;
-    data.map(item => {
-        if (typeof item === "string") {
-            arr.push(item);
-        } else if (Array.isArray(item)) {
-            if (index === 0) {
-                fillMainStream(arr, item);
-            }
-            ++index;
-        }
-    });
-};
-
-const writeSgfTree = (ret, json) => {
-    json.map(item => {
-        if (typeof item === "string") {
-            ret.a += ';' + item;
-        } else if (Array.isArray(item)) {
-            ret.a += '(';
-            writeSgfTree(ret, item);
-            ret.a += ')';
-        }
-    });
-};
-
-class Node {
+class NodeList {
     constructor(parent) {
         this.parent = parent;
         this.children = [];
     }
 }
 
-const sgf2json = (sgf) => {
-    let counter = 0;
-    let hash = {};
-    let current = 0;
+class Node {
+    constructor() {
+        this.properties = [];
+    }
+}
+
+const writeSgfTree = (ret, root) => {
+    root.map(item => {
+        if (Array.isArray(item) && item.length > 0) {
+            if (Array.isArray(item[0])) {
+                ret.a += '(';
+                writeSgfTree(ret, item);
+                ret.a += ')';
+            } else {
+                ret.a += ';';
+                item.map(n => {
+                    let values = n.value.reduce((acc, v) => {
+                        return acc + `[${v}]`;
+                    }, '');
+                    ret.a += `${n.key}${values}`;
+                });
+            }
+        }
+    });
+};
+
+const writeJsonTree = (ret, json) => {
+    json.map(item => {
+        if (item instanceof Node) {
+            ret.push(item.properties);
+        } else if (item instanceof NodeList) {
+            let list = [];
+            ret.push(list);
+            writeJsonTree(list, item.children);
+        }
+    });
+};
+
+const writeJsonTreeMain = (ret, json) => {
+    let index = 0;
+    json.map((item) => {
+        if (item instanceof Node) {
+            ret.push(item.properties);
+        } else if (item instanceof NodeList) {
+            if (index === 0) {
+                writeJsonTreeMain(ret, item.children);
+            }
+            ++index;
+        }
+    });
+};
+
+const sgf2NodeList = (sgf) => {
+    let root = new NodeList();
+    let currentPointer = root;
     let buf = '';
     let inSqBracket = false;
-    hash['0'] = new Node();
 
     for (let i in sgf) {
         const a = sgf[i];
         if (inSqBracket) {
             if (a === ']' && sgf[i - 1] !== '\\') {
                 inSqBracket = false;
-            }
-            buf += a;
-        } else {
-            if (a === '(') {
-                if (buf.trim().length > 0) {
-                    hash[current].children.push(buf.trim());
-                    buf = '';
+                let currentNode = currentPointer.children[currentPointer.children.length - 1];
+                if (!(currentNode instanceof Node)) {
+                    throw 'currentNode is not instanceof Node';
+                } else {
+                    currentNode.properties[currentNode.properties.length - 1].value.push(buf);
                 }
-                hash[++counter] = new Node(current);
-                hash[current].children.push(counter);
-                current = counter;
-            } else if (a === ';') {
-                if (buf.trim().length > 0) {
-                    hash[current].children.push(buf.trim());
-                    buf = '';
-                }
-            } else if (a === ')') {
-                if (buf.trim().length > 0) {
-                    hash[current].children.push(buf.trim());
-                    buf = '';
-                }
-                current = hash[current].parent;
-            } else if (a === '[') {
-                inSqBracket = true;
-                buf += a;
+                buf = '';
             } else {
                 buf += a;
             }
+        } else {
+            if (a === '(') {
+                if (buf.length > 0) {
+                    currentPointer.children.push(buf);
+                    buf = '';
+                }
+                let newNodeList = new NodeList(currentPointer);
+                currentPointer.children.push(newNodeList);
+                currentPointer = newNodeList;
+            } else if (a === ';') {
+                let newNode = new Node();
+                currentPointer.children.push(newNode);
+            } else if (a === ')') {
+                currentPointer = currentPointer.parent;
+            } else if (a === '[') {
+                inSqBracket = true;
+                if (buf.length > 0) {
+                    let currentNode = currentPointer.children[currentPointer.children.length - 1];
+                    if (!(currentNode instanceof Node)) {
+                        throw 'currentNode is not instanceof Node';
+                    } else {
+                        currentNode.properties.push({key: buf, value: []})
+                    }
+                    buf = '';
+                }
+            } else {
+                buf += a.trim();
+            }
         }
     }
+    return root.children;
+};
 
-    // console.log(JSON.stringify(hash, null, 2));
-
-    let root = [];
-    fillArray(root, 0, hash);
-
-    return root;
+const sgf2json = (sgf) => {
+    let ret = [];
+    writeJsonTree(ret, sgf2NodeList(sgf));
+    return ret;
 };
 
 const sgf2jsonMain = (sgf) => {
-    const parsed = sgf2json(sgf);
     let ret = [];
-    fillMainStream(ret, parsed);
+    writeJsonTreeMain(ret, sgf2NodeList(sgf));
     return ret;
 };
 
