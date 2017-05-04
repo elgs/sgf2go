@@ -55,7 +55,6 @@ With `sgf2go`, an `sgf` file with no variations: will be converted to the follow
     ]
   ]
 ]
-
 ```
 
 One with variation will yield the following result:
@@ -104,7 +103,6 @@ One with variation will yield the following result:
     ]
   ]
 ]
-
 ```
 
 ## Usage
@@ -205,7 +203,6 @@ The output will be:
     ]
   ]
 ]
-
 ```
 
 ## Generate `sgf` from `json`:
@@ -256,7 +253,6 @@ console.log(generated);
 The output will be:
 ```sgf
 (;FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc];W[dd];B[ad];W[bd])(;B[hh];W[hg]))
-
 ```
 
 Hope it helps.
