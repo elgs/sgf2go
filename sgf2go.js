@@ -120,7 +120,7 @@ const sgf2json = (sgf) => {
 const sgf2jsonMain = (sgf) => {
     let ret = [];
     writeJsonTreeMain(ret, sgf2NodeList(sgf));
-    return ret;
+    return [ret];
 };
 
 const json2sgf = (json) => {

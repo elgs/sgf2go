@@ -180,27 +180,29 @@ The output will be:
 ```json
 [
   [
-    {"key":"FF","value":["4"]},
-    {"key":"GM","value":["1"]},
-    {"key":"SZ","value":["19"]}
-  ],
-  [
-    {"key":"B","value":["aa"]}
-  ],
-  [
-    {"key":"W","value":["bb"]}
-  ],
-  [
-    {"key":"B","value":["cc"]}
-  ],
-  [
-    {"key":"W","value":["dd"]}
-  ],
-  [
-    {"key":"B","value":["ad"]}
-  ],
-  [
-    {"key":"W","value":["bd"]}
+    [
+      {"key":"FF","value":["4"]},
+      {"key":"GM","value":["1"]},
+      {"key":"SZ","value":["19"]}
+    ],
+    [
+      {"key":"B","value":["aa"]}
+    ],
+    [
+      {"key":"W","value":["bb"]}
+    ],
+    [
+      {"key":"B","value":["cc"]}
+    ],
+    [
+      {"key":"W","value":["dd"]}
+    ],
+    [
+      {"key":"B","value":["ad"]}
+    ],
+    [
+      {"key":"W","value":["bd"]}
+    ]
   ]
 ]
 
