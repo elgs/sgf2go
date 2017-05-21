@@ -22,7 +22,11 @@ const writeSgfTree = (ret, root) => {
                 ret.a += ';';
                 item.map(n => {
                     let values = n.value.reduce((acc, v) => {
-                        return acc + `[${v}]`;
+                        if (v.length === 0) {
+                            return acc + `[]`;
+                        } else {
+                            return acc + `[${v}]`;
+                        }
                     }, '');
                     ret.a += `${n.key}${values}`;
                 });
